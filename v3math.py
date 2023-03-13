@@ -37,7 +37,7 @@ def price_to_sqrtp(p):
     return int(math.sqrt(p) * q96)
     #Again turns non square-rooted numbers into Q64.96
     #If we are dealing with the v3 variables, you need to remove the math.sqrt() and only multiply p by 2^96.
-price_to_sqrtp(5000)
+print(price_to_sqrtp(5000))
 
 #Finally to calculate the liquidity of our ranges, we need to calculate 2 liquidities.
 #If we remember our curve B - Pc - A. Where B represents the point where we have (Eth = 0 : Usdc = Infinity) and A represents (Eth = Inifinty : Usdc = 0).
