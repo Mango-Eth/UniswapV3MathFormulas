@@ -37,7 +37,7 @@ def price_to_sqrtp(p):
     return int(math.sqrt(p) * q96)
     #Again turns non square-rooted numbers into Q64.96
     #If we are dealing with the v3 variables, you need to remove the math.sqrt() and only multiply p by 2^96.
-print(price_to_sqrtp(5000))
+print(price_to_sqrtp(5000))    #5602277097478614198912276234240
 
 #Finally to calculate the liquidity of our ranges, we need to calculate 2 liquidities.
 #If we remember our curve B - Pc - A. Where B represents the point where we have (Eth = 0 : Usdc = Infinity) and A represents (Eth = Inifinty : Usdc = 0).
@@ -56,9 +56,10 @@ print(price_to_sqrtp(5000))
 # L = delta(y) / (sqrt(Pc) - sqrt(Pa))
 
 
-sqrtp_low = price_to_sqrtp(4545)
-sqrtp_cur = price_to_sqrtp(5000)
-sqrtp_upp = price_to_sqrtp(5500)
+sqrtp_low = price_to_sqrtp(4545)    #5341294542274603406682713227264
+sqrtp_cur = price_to_sqrtp(5000)    #5602277097478614198912276234240
+sqrtp_upp = price_to_sqrtp(5500)    #5875717789736564987741329162240
+
 
 def liquidity0(amount, pa, pb):
     if pa > pb:

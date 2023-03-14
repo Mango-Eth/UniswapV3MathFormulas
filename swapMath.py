@@ -18,7 +18,7 @@ import math
 # So:
 # Pc = 5602277097478614198912276234240
 # Liquidity = 1517882343751509868544            // from current foundry test project.
-# delta(sqrt(P)) = 42/1517882343751509868544 = 2192253463713690532467206957
+# delta(sqrt(P)) = 42/1517882343751509868544 = 2192253463713690532467206957         42 usdc needs to be changed to fixedPoint q96
 
 # The formula for the Target Price (Pt) is :
 
@@ -38,8 +38,8 @@ Pc = 5602277097478614198912276234240
 amountIn = 42 * eth
 
 #We turn our amountIn into fixedPoint, then divide by liquidity as stated in the formula above:
-delta_Price = (amountIn * q96) / Liquidity          #   2.1922534637136906e+27
-Pt = Pc + delta_Price                               #   5.604469350942327e+30       sqrtPrice values are supposed to be this bgi.
+delta_Price = int((amountIn * q96) / Liquidity)         #   2192253463713690612507082752
+Pt = Pc + delta_Price                                   #   5604469350942327889524783316992      These are trucanted values, because of the INT
 
 # To transform this huge fixedPoint number into a human readable number we can:
 regular_target_Price = ((Pt / q96) ** 2)    # regular_target_Price = 5003.913912782393
@@ -47,7 +47,7 @@ regular_target_Price = ((Pt / q96) ** 2)    # regular_target_Price = 5003.913912
 # Calculate the new tick:
 new_tick = price_to_tick((Pt / q96) ** 2)   # 85184
 
-#print(new_tick)
+#print(Pt)
 
 # After having found the Pt, target price, we can calculate the token amounts using these formulas:
 
@@ -66,10 +66,10 @@ def calc_amount1(liq, pa, pb):
         pa, pb = pb, pa
     return int(liq * (pb - pa) / q96)
 
-amount_In = calc_amount1(Liquidity, Pt, Pc)     #41.99999999999241      dy
-amount_Out = calc_amount0(Liquidity, Pt, Pc)    #0.00839671424216093    dx  claro pe care llama
+amount_In = calc_amount1(Liquidity, Pt, Pc)     #41.99999999999241(with decimals)       42.0(in INT) dy
+amount_Out = calc_amount0(Liquidity, Pt, Pc)    #0.00839671424216093(with decimals)     0.008396714242162444(in INT)    dx  claro pe care llama
 
-#print(amount_In / eth, amount_Out / eth)
+#cprint(amount_In / eth, amount_Out / eth)
 
 # Next some mathematical magic. To prove that our amountOut is correct, we can apply the following formula:
 
@@ -85,9 +85,10 @@ def calc_delta_1over_sqrtP(Pt, Pc):
 
 # We now turn this regular value into fixedPoint binary.
 
-fixedPoint_1over_sqrtP = calc_delta_1over_sqrtP(Pt, Pc) * q96
+fixedPoint_1over_sqrtP = calc_delta_1over_sqrtP(Pt, Pc) * q96   #-5.531861067314264e-06     cant be INT because its negative, the negative side represents the amount of tokens leaving the pool
 
-delta_X = fixedPoint_1over_sqrtP * Liquidity
+dx = fixedPoint_1over_sqrtP * Liquidity
 
-print(delta_X)      # -8396714242162704.0       It has 16 digits, so in terms of ETH its 0.00839671. Also its negative because its the amount that is being removed from the pool.
+print(dx)      # -8396714242162704.0       It has 16 digits, so in terms of ETH its 0.00839671... Also its negative because its the amount that is being removed from the pool.
 
+# Works!
