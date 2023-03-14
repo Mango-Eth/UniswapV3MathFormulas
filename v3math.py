@@ -80,6 +80,7 @@ liq1 = liquidity1(amount_usdc, sqrtp_cur, sqrtp_low)
 liq = int(min(liq0, liq1))
 
 # we get the lower number of both values with line 80.
+print(liq, "liquidty")
 
 # Finally some calculations to make sure, correct amounts are deposited.
 # These functions just round up, the by the user selected values. A periphery contract does the calculation, this isnt very user friendly if ud ont know math.

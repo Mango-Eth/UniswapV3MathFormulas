@@ -1,4 +1,4 @@
-#Aver serrano, yo explico segun la cara te dire.
+#Aver serrano, yo explico segun la cara.
 import math
 
 #In v2 if you wanted to calculate the amountOut of a reserve, you had to use the constant product formula: dy = ydx / (x + dx) or dx = xdy /(y + dy)
@@ -32,7 +32,7 @@ def price_to_tick(p):
 price_to_tick(5000)
 eth = 1e18
 q96 = 2**96
-
+            
 Liquidity = 1517882343751509868544
 Pc = 5602277097478614198912276234240    
 amountIn = 42 * eth
@@ -66,8 +66,28 @@ def calc_amount1(liq, pa, pb):
         pa, pb = pb, pa
     return int(liq * (pb - pa) / q96)
 
-amount_In = calc_amount1(Liquidity, Pt, Pc)
-amount_Out = calc_amount0(Liquidity, Pt, Pc)
+amount_In = calc_amount1(Liquidity, Pt, Pc)     #41.99999999999241      dy
+amount_Out = calc_amount0(Liquidity, Pt, Pc)    #0.00839671424216093    dx  claro pe care llama
 
-print(amount_In / eth, amount_Out / eth)
+#print(amount_In / eth, amount_Out / eth)
+
+# Next some mathematical magic. To prove that our amountOut is correct, we can apply the following formula:
+
+# deltaX = delta(1/sqrt(P)) * Liquidity
+
+# So far we know: Liquidity, delta(sqrt(P)), deltaX. Remember that delta(sqrt(P)) != delta(1/sqrt(P)) duh -.-
+# To find the value of delta(1/sqrt(P)) we can:
+
+# delta(1/sqrt(P)) = (1/sqrt(Pt)) - (1/sqrt(Pc))
+
+def calc_delta_1over_sqrtP(Pt, Pc):
+    return ((1/Pt) - (1/Pc))            #-6.982190286589445e-35    regular number
+
+# We now turn this regular value into fixedPoint binary.
+
+fixedPoint_1over_sqrtP = calc_delta_1over_sqrtP(Pt, Pc) * q96
+
+delta_X = fixedPoint_1over_sqrtP * Liquidity
+
+print(delta_X)      # -8396714242162704.0       It has 16 digits, so in terms of ETH its 0.00839671. Also its negative because its the amount that is being removed from the pool.
 
