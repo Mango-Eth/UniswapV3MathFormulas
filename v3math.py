@@ -14,7 +14,7 @@ import math
 def price_to_tick(p):
     return math.floor(math.log(p, 1.0001))
 
-price_to_tick(5000)
+price_to_tick(5000)      #85176
 #Calculates the exact tick for the price(5000).
 # This formula might differ, depending on the state of Price.
 # In v3 Price is sqrtPriceX96, therefore it will be sqrt(5000) = 70.71 and not 50000.
@@ -25,7 +25,7 @@ def price_to_tick_sqrtPrice(p):
     # Makes sense, in the other you calculate X in base Z. 
     # If you only have the root of X all of a sudden you need to apply sqrt(Z). Duh..
 
-print(price_to_tick_sqrtPrice(70.71))
+print(price_to_tick_sqrtPrice(70.71))   #85175
 
 
 q96 = 2**96
@@ -61,6 +61,8 @@ sqrtp_cur = price_to_sqrtp(5000)    #5602277097478614198912276234240
 sqrtp_upp = price_to_sqrtp(5500)    #5875717789736564987741329162240
 
 
+
+
 def liquidity0(amount, pa, pb):
     if pa > pb:
         pa, pb = pb, pa
@@ -76,12 +78,12 @@ amount_eth = 1 * eth
 amount_usdc = 5000 * eth
 # we use these valeus as our deltas
 
-liq0 = liquidity0(amount_eth, sqrtp_cur, sqrtp_upp)
-liq1 = liquidity1(amount_usdc, sqrtp_cur, sqrtp_low)
+liq0 = liquidity0(amount_eth, sqrtp_cur, sqrtp_upp)     #1.5194373080147697e+21
+liq1 = liquidity1(amount_usdc, sqrtp_cur, sqrtp_low)    #1.5178823437515099e+21
 liq = int(min(liq0, liq1))
 
 # we get the lower number of both values with line 80.
-print(liq, "liquidty")
+print(liq, "liquidty")  #1517882343751509868544
 
 # Finally some calculations to make sure, correct amounts are deposited.
 # These functions just round up, the by the user selected values. A periphery contract does the calculation, this isnt very user friendly if ud ont know math.
